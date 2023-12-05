@@ -1,27 +1,13 @@
-# Start with an old and vulnerable version of a base image
-FROM node:6.17.1
+# Use an outdated and vulnerable version of an HTTP server
+FROM httpd:2.2
 
-# Install an outdated and vulnerable package
-RUN apt-get update && apt-get install -y \
-    wget=1.16-1 \
-    curl=7.47.0-1+deb9u3 \
-    git=1:2.1.4-2.1+deb8u7 \
-    openssl=1.0.2g-1ubuntu4.15
+# Copy a simple HTML file into the container (make sure this file exists in your repo)
+COPY index.html /usr/local/apache2/htdocs/
 
-# Copy application source
-COPY . /app
+# The file 'index.html' should be a simple HTML file but the vulnerability lies in the server itself
 
-# Set the working directory
-WORKDIR /app
-
-# Expose a common ports
+# Expose the default HTTP port
 EXPOSE 80
-EXPOSE 22
-EXPOSE 23
-EXPOSE 53
-EXPOSE 20
-EXPOSE 21
-EXPOSE 25
 
-# Run an application with known vulnerabilities
-CMD ["node", "vulnerable-app.js"]
+# Default command to run Apache in the foreground
+CMD ["httpd-foreground"]
